@@ -245,7 +245,6 @@ For each instance:
 ### 3️⃣ **Action Phase**
 ```
 IF idle instances found:
-  → Take snapshot (prevent data loss)
   → Shut down instance (freeze billing)
   → Log action + timestamp
   ↓
