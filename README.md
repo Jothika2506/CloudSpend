@@ -458,6 +458,22 @@ Built with:
 
 ---
 
+## Dashboard Preview
+
+![CloudSpend Dashboard](./screenshots/dashboard.png)
+
+Real-time metrics showing cost savings, idle detection, and instance status.
+
+---
+
+## How It Works in Action
+
+![Policy Engine Output](./screenshots/scheduler-output.png)
+
+The scheduler runs every 5 minutes, analyzes CloudWatch metrics, detects idle instances, and stores results in MongoDB.
+
+---
+
 **Made with ☕ for FinOps Engineers & Cloud Cost Optimizers**
 
 Last Updated: September 2026
