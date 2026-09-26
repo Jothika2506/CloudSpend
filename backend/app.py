@@ -36,18 +36,6 @@ def load_results():
     results = list(collection.find({}, {"_id": 0}))
     return results
 
-def initialize_mock_data():
-    """Load mock data if database is empty and LOAD_MOCK_DATA is enabled"""
-    load_mock = os.getenv("LOAD_MOCK_DATA", "false").lower() == "true"
-    
-    if load_mock and collection.count_documents({}) == 0:
-        print(">>> Database is empty, loading mock data...")
-        try:
-            import mock_setup
-            mock_setup.generate_mock_data()
-            print(">>> Mock data loaded successfully!")
-        except Exception as e:
-            print(f">>> Error loading mock data: {e}")
 
 def scheduled_job():
     print("\n>>> Scheduler triggered — running policy engine...")
@@ -118,7 +106,7 @@ def get_yearly():
     return jsonify(list(grouped.values()))
 
 if __name__ == "__main__":
-    initialize_mock_data()  # Load mock data if enabled and DB is empty
+    
     
     scheduler = BackgroundScheduler()
     scheduler.add_job(scheduled_job, "interval", minutes=5)
