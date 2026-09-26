@@ -57,7 +57,7 @@ def run_policy_engine():
         ec2.stop_instances(InstanceIds=idle_instances)
         print(f"\n  ACTION TAKEN:")
         print(f"  ✓ {len(idle_instances)} instance(s) IDLE (CPU + Network + Disk all near zero)")
-        print(f"    → Snapshot taken + Automatically shut down")
+        print(f"    → Automatically shut down")
         print(f"    → Billing clock frozen")
         print(f"  ✓ {len(instance_ids) - len(idle_instances)} instance(s) ACTIVE → Left running safely")
         print(f"  ✓ Estimated saving this scan: ${len(idle_instances) * 0.0104:.4f}/hr")
