@@ -23,7 +23,7 @@ CloudSpend is a **FinOps (Financial Operations) monitoring engine** that automat
 ### 🔍 **Intelligent Idle Detection**
 - **Multi-metric validation:** CPU + Network + Disk all near-zero = IDLE
 - **Configurable thresholds** (default: CPU <10%, Network <5MB, Disk <5MB)
-- **Snapshot before shutdown** to prevent data loss
+- **Automated shutdown** of idle instances to freeze billing (*snapshot feature in progress*)
 
 ### 💰 **Cost Tracking & Analytics**
 - **Real-time savings calculation** ($0.0104/hour per idle instance)
@@ -103,7 +103,7 @@ Policy Engine (Moto Mock AWS)
 
 ```bash
 # Clone repository
-git clone https://github.com/Jothika2506/CloundSpend.git
+git clone https://github.com/Jothika2506/CloudSpend.git
 cd CloudSpend
 
 # Create virtual environment
@@ -157,8 +157,8 @@ cd frontend && npm start
 
 **What happens:**
 1. ✅ Backend connects to MongoDB Atlas
-2. ✅ Mock AWS environment loads (10 EC2 instances)
-3. ✅ Policy engine runs immediately (detects ~3-4 idle instances)
+2. ✅ Mock AWS environment loads (3–7 EC2 instances, randomized)
+3. ✅ Policy engine runs immediately (detects idle instances)
 4. ✅ Results stored in MongoDB
 5. ✅ Dashboard populates with charts & metrics
 
@@ -195,20 +195,22 @@ GET http://localhost:5000/api/yearly
 ```
 CloudSpend/
 ├── backend/
-│   ├── app.py                    # Flask server + API routes
+│   ├── app.py                    # Flask server + API routes + scheduler
 │   ├── requirements.txt          # Python dependencies
+│   ├── models/                   # Data models (future use)
 │   ├── scripts/
-│   │   ├── policy_engine.py      # Core FinOps logic
-│   │   └── mock_setup.py         # Mock AWS environment
+│   │   ├── policy_engine.py      # Core FinOps idle detection logic
+│   │   └── mock_setup.py         # Mock AWS environment (moto)
 │   └── data/
-│       └── results.json          # Local backup of results
+│       └── results.json          # Local data backup
 ├── frontend/
 │   ├── src/
-│   │   ├── components/           # React components
-│   │   ├── pages/               # Dashboard pages
-│   │   └── App.jsx              # Main app entry
-│   ├── package.json
-│   └── tailwind.config.js        # Tailwind CSS config
+│   │   ├── App.js                # Main React app — dashboard UI
+│   │   ├── App.css               # Component styles
+│   │   └── index.js              # React entry point
+│   ├── public/
+│   └── package.json
+├── venv/                         # Python virtual environment
 ├── .env                          # Environment variables (gitignored)
 ├── .gitignore
 └── README.md
@@ -311,14 +313,25 @@ DISK_THRESHOLD = 5.0          # MB/s disk I/O
 
 ---
 
-## Future Enhancements
+## Development Roadmap
 
+**Completed:**
+- ✅ Multi-metric idle detection (CPU + Network + Disk)
+- ✅ Real-time dashboard with charts
+- ✅ MongoDB integration for persistent storage
+- ✅ Background scheduler (every 5 min)
+- ✅ RESTful API for data retrieval
+
+**In Progress:**
+- 🔄 **Snapshot before shutdown** — EC2 snapshot creation before instance termination
+- 🔄 **Cost attribution** — Map savings back to specific teams/projects
+
+**Planned for Future:**
 - [ ] **Real AWS Integration** — Connect to actual AWS account (replace Moto mocks)
 - [ ] **Budget Alerts** — Email/Slack notifications when spending exceeds threshold
 - [ ] **Regional Breakdown** — Cost analysis by AWS region
 - [ ] **Instance Tagging** — Exclude production/critical instances from auto-shutdown
 - [ ] **Webhook Integration** — Send alerts to external monitoring tools
-- [ ] **Cost Prediction** — ML model to forecast next month's spending
 - [ ] **Audit Logs** — Track who authorized each shutdown action
 - [ ] **Multi-Account Support** — Monitor across multiple AWS accounts
 
@@ -338,12 +351,7 @@ cat .env
 ```
 
 ### Issue: Frontend shows "NaN%" or $0 in metrics
-**Fix:** Backend has no data. Load mock data:
-
-```bash
-cd backend
-python scripts/mock_setup.py
-```
+**Fix:** Backend has no data. Mock data is generated automatically by the scheduler when `app.py` runs. Ensure `MONGODB_URI` is set correctly in `.env` and restart the backend.
 
 ### Issue: Policy engine not running in background
 **Fix:** Ensure APScheduler started. Check for errors in backend logs.
@@ -362,12 +370,15 @@ curl http://localhost:5000/api/summary
 curl http://localhost:5000/api/results | python -m json.tool
 ```
 
-### Load Mock Data
-```bash
-cd backend
-python scripts/mock_setup.py
-# Then refresh dashboard at http://localhost:3000
-```
+### Mock Data
+Mock data is generated automatically by the scheduler every 5 minutes when `app.py` runs. The policy engine creates new scan results with randomized instance data.
+
+To start fresh:
+- Stop backend (CTRL+C)
+- Clear MongoDB collection in Atlas: `db.scans.deleteMany({})`
+- Restart backend: `python app.py`
+- Scheduler will generate new scan within 5 minutes
+- Refresh dashboard at `http://localhost:3000`
 
 ---
 
@@ -403,10 +414,10 @@ AWS_REGION=us-east-1
 | Metric | Value | Notes |
 |--------|-------|-------|
 | **Scan Frequency** | Every 5 min | Configurable via APScheduler |
-| **Instances Monitored** | 1-10,000+ | Tested with 100+ instances |
-| **API Response Time** | <500ms | MongoDB indexing recommended for 1000+ records |
-| **Database Storage** | ~2KB per scan | 1000 scans = ~2MB MongoDB usage |
-| **Cost to Run** | ~$5-10/month | MongoDB Atlas free tier (512MB), AWS moto mocks |
+| **Instances per Scan** | 3–7 instances | Randomized mock environment |
+| **API Response Time** | <200ms | MongoDB queries for fast data retrieval |
+| **Database Storage** | ~2KB per scan | Efficient document-based storage |
+| **Cost to Run** | Free | MongoDB Atlas free tier + AWS moto mocks (no AWS charges) |
 
 ---
 
@@ -430,7 +441,7 @@ MIT License — feel free to use for personal & commercial projects.
 
 ## Contact & Support
 
-- **GitHub:** [Jothika2506/CloundSpend](https://github.com/Jothika2506/CloundSpend)
+- **GitHub:** [Jothika2506/CloudSpend](https://github.com/Jothika2506/CloudSpend)
 - **Issues:** Report bugs on GitHub Issues tab
 - **Questions:** Open a Discussion
 
