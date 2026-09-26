@@ -72,7 +72,7 @@ Policy Engine (Moto Mock AWS)
   ├─ Fetch EC2 instances
   ├─ Analyze CloudWatch metrics
   ├─ Detect idle resources
-  ├─ Auto-shutdown + snapshot
+  ├─ Auto-shutdown 
   └─ Store results in MongoDB
 ```
 
