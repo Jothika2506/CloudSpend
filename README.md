@@ -467,7 +467,7 @@ Real-time metrics showing cost savings, idle detection, and instance status.
 
 ## How It Works in Action
 
-![Policy Engine Output](./screenshots/scheduler-output.png)
+![Policy Engine Output](./screenshots/scheduler-output.jpg)
 
 The scheduler runs every 5 minutes, analyzes CloudWatch metrics, detects idle instances, and stores results in MongoDB.
 
