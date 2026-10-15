@@ -317,7 +317,7 @@ Displays charts:
 
 ## Live Scan Output
 
-![Scheduler Output](scheduler-output.png)
+![Scheduler Output](screenshots/scheduler-output.png)
 *Figure 3: Multi-cloud scan output from APScheduler showing instances detected across AWS, GCP, and Azure with real-time metrics and idle detection*
 
 ---
